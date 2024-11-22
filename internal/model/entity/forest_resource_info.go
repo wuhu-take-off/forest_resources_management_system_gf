@@ -9,7 +9,7 @@ type ForestResourceInfo struct {
 	ForestResourceInfoId      int    `json:"forestResourceInfoId"      orm:"forest_resource_info_id"      ` // 林地资源信息主键
 	ForestId                  int    `json:"forestId"                  orm:"forest_id"                    ` // 林地id
 	TreeSpeciesId             int    `json:"treeSpeciesId"             orm:"tree_species_id"              ` // 树种id
-	ForestResourceExamineTime string `json:"forestResourceExamineTime" orm:"forest_resource_examine_time" ` // 检查日期
+	ForestResourceExamineTime int64  `json:"forestResourceExamineTime" orm:"forest_resource_examine_time" ` // 检查日期
 	ForestResourceExamineType int    `json:"forestResourceExamineType" orm:"forest_resource_examine_type" ` // 检查类型
 	ForestStatus              int    `json:"forestStatus"              orm:"forest_status"                ` // 林地状态
 	ForestResourceExamineInfo string `json:"forestResourceExamineInfo" orm:"forest_resource_examine_info" ` // 检测数据

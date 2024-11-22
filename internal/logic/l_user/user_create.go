@@ -12,6 +12,10 @@ import (
 
 func (d defaultUserV2) UserCreate(ctx context.Context, req *user_v2.UserCreateReq) (res *user_v2.UserCreateRes, err error) {
 	var user *do.User
+	if req.UserName == "admin" {
+		return nil, common.NewError(consts.Forbidden, "Admin user cannot be created")
+	}
+
 	common.CopyFields(req, &user)
 	if _, err = dao.User.Ctx(ctx).Insert(user); err != nil {
 		g.Log().Errorf(ctx, "Error inserting user: %v", err)

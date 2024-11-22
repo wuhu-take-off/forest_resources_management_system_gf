@@ -11,6 +11,7 @@ import (
 	"forest_resources_management_system_gf/internal/controller/policy"
 	"forest_resources_management_system_gf/internal/controller/resource"
 	"forest_resources_management_system_gf/internal/controller/tree_species"
+	"forest_resources_management_system_gf/internal/controller/tst"
 	"forest_resources_management_system_gf/internal/controller/user"
 	"forest_resources_management_system_gf/middleware"
 	_ "github.com/gogf/gf/contrib/drivers/mysql/v2"
@@ -48,6 +49,7 @@ func main() {
 		group.Bind(notice.NewNotice_v1())
 		group.Bind(people_application.NewPeople_application_v1())
 		group.Bind(chat.NewChar_v1()).Middleware(middleware.TokenAuthMiddleware)
+		group.Bind(tst.NewTst_v1())
 	})
 	s.Run()
 }

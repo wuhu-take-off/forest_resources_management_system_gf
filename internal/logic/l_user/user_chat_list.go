@@ -6,6 +6,7 @@ import (
 	"forest_resources_management_system_gf/internal/common"
 	"forest_resources_management_system_gf/internal/consts"
 	"forest_resources_management_system_gf/internal/dao"
+	"forest_resources_management_system_gf/internal/logic/l_department"
 	"forest_resources_management_system_gf/internal/model/entity"
 	"forest_resources_management_system_gf/middleware"
 	"github.com/gogf/gf/v2/frame/g"
@@ -46,13 +47,13 @@ func (d defaultUserV2) UserChatList(ctx context.Context, req *user_v2.UserChatLi
 	//for i := range userIdList {
 	//	distinctMap[userIdList[i]] = struct{}{}
 	//}
-	//userIdList = make([]int, 0, len(distinctMap))
-	//for k := range distinctMap {
-	//	userIdList = append(userIdList, k)
-	//}
+	userIdList := make([]int, 0, len(distinctMap))
+	for k := range distinctMap {
+		userIdList = append(userIdList, k)
+	}
 	//获取用户名
 	var userListTmp []*entity.User
-	if err := dao.User.Ctx(ctx).WhereIn(dao.User.Columns().UserId, distinctMap).
+	if err := dao.User.Ctx(ctx).WhereIn(dao.User.Columns().UserId, userIdList).
 		Fields(dao.User.Columns().UserId, dao.User.Columns().UserName).Scan(&userListTmp); err != nil {
 		g.Log().Errorf(ctx, "Error while fetching user list: %v", err)
 		return nil, common.NewError(consts.InternalServerError, "Error while fetching user list")
@@ -60,6 +61,41 @@ func (d defaultUserV2) UserChatList(ctx context.Context, req *user_v2.UserChatLi
 	res = &user_v2.UserChatListRes{
 		UserChatList: make([]*user_v2.UserChatListStruct, 0),
 	}
-	common.CopyFields(userListTmp, &res.UserChatList)
+	for i := range userListTmp {
+		res.UserChatList = append(res.UserChatList, &user_v2.UserChatListStruct{
+			UserChatStruct: &user_v2.UserChatStruct{
+				UserId:   userListTmp[i].UserId,
+				UserName: userListTmp[i].UserName,
+			},
+		})
+	}
+
+	//获取部门的聊天列表
+	department := l_department.NewDepartmentTool().Ctx(ctx).GetDepartment(claims.UserId)
+	departmentIdList := make([]int, 0, len(department))
+	for i := range department {
+		departmentIdList = append(departmentIdList, department[i].DepartmentId)
+	}
+	if array, err := dao.GroupChat.Ctx(ctx).WhereIn(dao.GroupChat.Columns().GroupChatReceiverId, departmentIdList).
+		Fields(dao.GroupChat.Columns().GroupChatReceiverId).Array(); err != nil {
+		g.Log().Errorf(ctx, "Error while fetching group chat list: %v", err)
+		return nil, common.NewError(consts.InternalServerError, "Error while fetching group chat list")
+	} else {
+		distinctMap = make(map[int]struct{})
+		for i := range array {
+			distinctMap[array[i].Int()] = struct{}{}
+		}
+		for i := range department {
+			if _, ok := distinctMap[department[i].DepartmentId]; ok {
+				res.UserChatList = append(res.UserChatList, &user_v2.UserChatListStruct{
+					GroupChatStruct: &user_v2.GroupChatStruct{
+						GroupId:   department[i].DepartmentId,
+						GroupName: department[i].DepartmentName,
+					},
+				})
+			}
+		}
+	}
+
 	return
 }

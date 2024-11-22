@@ -15,5 +15,5 @@ type PrivateChat struct {
 	PrivateChatSendId     interface{} // 发送方id
 	PrivateChatReceiverId interface{} // 接收方id
 	PrivateChatCreateTime interface{} // 发送时间
-	PrivateChatMessage    interface{} //
+	PrivateChatMessage    interface{} // 消息内容
 }

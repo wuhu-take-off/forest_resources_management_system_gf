@@ -24,7 +24,7 @@ type PrivateChatColumns struct {
 	PrivateChatSendId     string // 发送方id
 	PrivateChatReceiverId string // 接收方id
 	PrivateChatCreateTime string // 发送时间
-	PrivateChatMessage    string //
+	PrivateChatMessage    string // 消息内容
 }
 
 // privateChatColumns holds the columns for table private_chat.

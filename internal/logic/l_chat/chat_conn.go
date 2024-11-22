@@ -29,7 +29,7 @@ func (c *ChatConn) AddConn(userId int, conn *websocket.Conn) {
 	defer c.Unlock()
 	g.Log().Printf(nil, "add user %d to chat", userId)
 	//删除之前的连接
-	c.Remove(userId)
+	c.Remove(userId, true)
 	c.ChatMap[userId] = conn
 	go c.monitorChat(userId, conn)
 }
@@ -48,7 +48,7 @@ func (c *ChatConn) monitorChat(userId int, conn *websocket.Conn) {
 
 // Remove  删除指定用户的连接
 func (c *ChatConn) Remove(userId int, isSafe ...bool) {
-	if len(isSafe) > 0 && isSafe[0] {
+	if len(isSafe) == 0 || !isSafe[0] {
 		c.Lock()
 		defer c.Unlock()
 	}

@@ -11,7 +11,7 @@ import (
 // Department is the golang structure of table department for DAO operations like Where/Data.
 type Department struct {
 	g.Meta             `orm:"table:department, do:true"`
-	DepartmentId       interface{} // 部门ID
+	DepartmentId       interface{} // 部门Id
 	DepartmentName     interface{} // 部门名称
 	DepartmentParentId interface{} // 父类部门
 }

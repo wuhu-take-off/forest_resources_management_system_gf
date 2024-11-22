@@ -20,7 +20,7 @@ type DepartmentDao struct {
 
 // DepartmentColumns defines and stores column names for table department.
 type DepartmentColumns struct {
-	DepartmentId       string // 部门ID
+	DepartmentId       string // 部门Id
 	DepartmentName     string // 部门名称
 	DepartmentParentId string // 父类部门
 }

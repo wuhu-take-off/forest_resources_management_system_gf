@@ -7,4 +7,5 @@ const (
 	NoticeAnnexDir              = "resource/notice/annex/"                //通知附件目录
 	PeopleApplicationDir        = "resource/people_application/"          //群众申请目录
 	PrivateChatDir              = "resource/private_chat/"                //私聊目录
+	GroupChatDir                = "resource/group_chat/"                  //群聊目录
 )
