@@ -3,4 +3,4 @@
 # https://goframe.org/pages/viewpage.action?pageId=3673173
 database:
   default:
-    link:  "mysql:root:112154ZhouM..@tcp(127.0.0.1:3306)/forest"
+    link:  "mysql:root:admin@123@tcp(127.0.0.1:3306)/forest"

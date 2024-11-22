@@ -16,7 +16,9 @@ func (d defaultUserV2) UserChatList(ctx context.Context, req *user_v2.UserChatLi
 	if claims == nil {
 		return nil, common.NewError(consts.Unauthorized, "token is invalid")
 	}
-	var userIdList []int
+	//var userIdList []int
+	//数组去重
+	distinctMap := make(map[int]struct{})
 
 	// Fetch public chat list
 	if array, err := dao.PrivateChat.Ctx(ctx).Where(dao.PrivateChat.Columns().PrivateChatSendId, claims.UserId).
@@ -26,7 +28,8 @@ func (d defaultUserV2) UserChatList(ctx context.Context, req *user_v2.UserChatLi
 		return nil, common.NewError(consts.InternalServerError, "Error while fetching private chat list")
 	} else {
 		for i := range array {
-			userIdList = append(userIdList, array[i].Int())
+			distinctMap[array[i].Int()] = struct{}{}
+			//userIdList = append(userIdList, array[i].Int())
 		}
 	}
 	// Fetch private chat list
@@ -36,21 +39,20 @@ func (d defaultUserV2) UserChatList(ctx context.Context, req *user_v2.UserChatLi
 		return nil, common.NewError(consts.InternalServerError, "Error while fetching private chat list")
 	} else {
 		for i := range array {
-			userIdList = append(userIdList, array[i].Int())
+			distinctMap[array[i].Int()] = struct{}{}
+			//userIdList = append(userIdList, array[i].Int())
 		}
 	}
-	//数组去重
-	distinctMap := make(map[int]struct{})
-	for i := range userIdList {
-		distinctMap[userIdList[i]] = struct{}{}
-	}
-	userIdList = make([]int, 0, len(distinctMap))
-	for k := range distinctMap {
-		userIdList = append(userIdList, k)
-	}
+	//for i := range userIdList {
+	//	distinctMap[userIdList[i]] = struct{}{}
+	//}
+	//userIdList = make([]int, 0, len(distinctMap))
+	//for k := range distinctMap {
+	//	userIdList = append(userIdList, k)
+	//}
 	//获取用户名
 	var userListTmp []*entity.User
-	if err := dao.User.Ctx(ctx).WhereIn(dao.User.Columns().UserId, userIdList).
+	if err := dao.User.Ctx(ctx).WhereIn(dao.User.Columns().UserId, distinctMap).
 		Fields(dao.User.Columns().UserId, dao.User.Columns().UserName).Scan(&userListTmp); err != nil {
 		g.Log().Errorf(ctx, "Error while fetching user list: %v", err)
 		return nil, common.NewError(consts.InternalServerError, "Error while fetching user list")
