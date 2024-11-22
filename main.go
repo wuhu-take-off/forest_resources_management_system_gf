@@ -23,7 +23,6 @@ func MiddlewareCORS(r *ghttp.Request) {
 	r.Middleware.Next()
 }
 func main() {
-
 	// 加载配置文件
 	s := g.Server()
 	//设置跨域
