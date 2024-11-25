@@ -1,6 +1,6 @@
 @echo off
 :: 获取输入的前缀和路径
-set name=people_application
+set name=department_affiche
 set path=api/%name%/%name%_v1/
 set logPath=internal/logic/l_%name%/
 set package=%name%_v1

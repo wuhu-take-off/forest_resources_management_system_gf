@@ -77,7 +77,10 @@ func (d *DepartmentTool) GetDepartment(userId int) []*entity.Department {
 		d.err = common.NewError(consts.InsufficientFunds, "Failed to get department")
 		return []*entity.Department{}
 	}
-	return d.GetParentDepartmentList(userInfo.DepartmentId)
+	list1 := d.GetParentDepartmentList(userInfo.DepartmentId)
+	list2 := d.GetSubDepartment(userInfo.DepartmentId)
+	return append(list1, list2[1:]...)
+	//return append(d.GetParentDepartmentList(userInfo.DepartmentId), d.GetSubDepartment(userInfo.DepartmentId)...)
 }
 
 // GetParentDepartmentList 获取父部门列表
@@ -91,8 +94,31 @@ func (d *DepartmentTool) GetParentDepartmentList(departmentId int) (departmentLi
 		return []*entity.Department{}
 	} else {
 		if len(departmentList) > 0 {
-			departmentList = append(departmentList, d.GetParentDepartmentList(departmentList[0].DepartmentParentId)...)
+			departmentList = append(d.GetParentDepartmentList(departmentList[0].DepartmentParentId), departmentList...)
 		}
 		return departmentList
 	}
+}
+
+// GetSubDepartment 获取子类部门
+func (d *DepartmentTool) GetSubDepartment(departmentId int) (departmentList []*entity.Department) {
+	if d.err != nil {
+		return []*entity.Department{}
+	}
+	if err := dao.Department.Ctx(d.ctx).WhereIn(dao.Department.Columns().DepartmentId, departmentId).Scan(&departmentList); err != nil {
+		g.Log().Errorf(d.ctx, "Failed to get department employees: %v", err)
+		d.err = common.NewError(consts.InsufficientFunds, "Failed to get department employees")
+		return []*entity.Department{}
+	}
+
+	for i := range departmentList {
+		var departmentTmpList []*entity.Department
+		if err := dao.Department.Ctx(d.ctx).WhereIn(dao.Department.Columns().DepartmentParentId, departmentList[i].DepartmentId).Scan(&departmentTmpList); err != nil {
+			g.Log().Errorf(d.ctx, "Failed to get department employees: %v", err)
+			d.err = common.NewError(consts.InsufficientFunds, "Failed to get department employees")
+			return []*entity.Department{}
+		}
+		departmentList = append(departmentList, departmentTmpList...)
+	}
+	return departmentList
 }

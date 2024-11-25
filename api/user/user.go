@@ -16,6 +16,7 @@ type IUserUser_v1 interface {
 }
 
 type IUserUser_v2 interface {
+	SingleUserInfo(ctx context.Context, req *user_v2.SingleUserInfoReq) (res *user_v2.SingleUserInfoRes, err error)
 	UserChatList(ctx context.Context, req *user_v2.UserChatListReq) (res *user_v2.UserChatListRes, err error)
 	UserCreate(ctx context.Context, req *user_v2.UserCreateReq) (res *user_v2.UserCreateRes, err error)
 	UserDel(ctx context.Context, req *user_v2.UserDelReq) (res *user_v2.UserDelRes, err error)
