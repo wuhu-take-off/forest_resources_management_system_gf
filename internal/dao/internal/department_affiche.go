@@ -26,6 +26,7 @@ type DepartmentAfficheColumns struct {
 	DepartmentId                string // 发布部门
 	UserId                      string // 创建用户
 	DepartmentAfficheCreateTime string // 创建时间
+	DepartmentAfficheUpdateTime string // 修改时间
 }
 
 // departmentAfficheColumns holds the columns for table department_affiche.
@@ -36,6 +37,7 @@ var departmentAfficheColumns = DepartmentAfficheColumns{
 	DepartmentId:                "department_id",
 	UserId:                      "user_id",
 	DepartmentAfficheCreateTime: "department_affiche_create_time",
+	DepartmentAfficheUpdateTime: "department_affiche_update_time",
 }
 
 // NewDepartmentAfficheDao creates and returns a new DAO object for table data access.

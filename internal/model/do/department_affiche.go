@@ -17,4 +17,5 @@ type DepartmentAffiche struct {
 	DepartmentId                interface{} // 发布部门
 	UserId                      interface{} // 创建用户
 	DepartmentAfficheCreateTime interface{} // 创建时间
+	DepartmentAfficheUpdateTime interface{} // 修改时间
 }

@@ -3,9 +3,11 @@ package main
 import (
 	"forest_resources_management_system_gf/internal/controller/chat"
 	"forest_resources_management_system_gf/internal/controller/department"
+	"forest_resources_management_system_gf/internal/controller/department_affiche"
 	"forest_resources_management_system_gf/internal/controller/forest"
 	"forest_resources_management_system_gf/internal/controller/forest_resource_info"
 	"forest_resources_management_system_gf/internal/controller/identity"
+	"forest_resources_management_system_gf/internal/controller/module"
 	"forest_resources_management_system_gf/internal/controller/notice"
 	"forest_resources_management_system_gf/internal/controller/people_application"
 	"forest_resources_management_system_gf/internal/controller/policy"
@@ -50,6 +52,8 @@ func main() {
 		group.Bind(people_application.NewPeople_application_v1())
 		group.Bind(chat.NewChar_v1()).Middleware(middleware.TokenAuthMiddleware)
 		group.Bind(tst.NewTst_v1())
+		group.Bind(department_affiche.NewDepartment_affiche_v1()).Middleware(middleware.TokenAuthMiddleware)
+		group.Bind(module.NewModule_v1()).Middleware(middleware.TokenAuthMiddleware)
 	})
 	s.Run()
 }

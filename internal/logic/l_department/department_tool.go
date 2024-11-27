@@ -28,14 +28,18 @@ func (d *DepartmentTool) Ctx(ctx context.Context) *DepartmentTool {
 	return d
 }
 func (d *DepartmentTool) GetDepartmentEmployees(departmentParentIds int) []*entity.User {
-	subDepartmentIds := d.GetDepartmentSub(departmentParentIds)
-
 	if d.err != nil {
 		return []*entity.User{}
 	}
-
+	list1 := d.GetParentDepartmentList(departmentParentIds)
+	list2 := d.GetSubDepartment(departmentParentIds)
+	list := append(list1, list2[1:]...)
+	var departmentIds []int
+	for _, v := range list {
+		departmentIds = append(departmentIds, v.DepartmentId)
+	}
 	var userInfoList []*entity.User
-	if err := dao.User.Ctx(d.ctx).WhereIn(dao.User.Columns().DepartmentId, subDepartmentIds).
+	if err := dao.User.Ctx(d.ctx).WhereIn(dao.User.Columns().DepartmentId, departmentIds).
 		FieldsEx(dao.User.Columns().UserPassword).Scan(&userInfoList); err != nil {
 		g.Log().Errorf(d.ctx, "Failed to get department employees: %v", err)
 		d.err = common.NewError(consts.InsufficientFunds, "Failed to get department employees")
@@ -71,6 +75,20 @@ func (d *DepartmentTool) GetDepartmentSub(departmentParentIds ...int) []int {
 
 // GetDepartment 获取用户所在部门信息
 func (d *DepartmentTool) GetDepartment(userId int) []*entity.Department {
+	if d.err != nil {
+		return []*entity.Department{}
+	}
+	if userId == 1 {
+		//如果用户是超级管理员，则返回所有部门信息
+		var departmentList []*entity.Department
+		if err := dao.Department.Ctx(d.ctx).Scan(&departmentList); err != nil {
+			g.Log().Errorf(d.ctx, "Failed to get department employees: %v", err)
+			d.err = common.NewError(consts.InsufficientFunds, "Failed to get department employees")
+			return departmentList
+		}
+		return departmentList
+	}
+
 	var userInfo *entity.User
 	if err := dao.User.Ctx(d.ctx).Where(dao.User.Columns().UserId, userId).Fields(dao.User.Columns().DepartmentId).Scan(&userInfo); err != nil {
 		g.Log().Errorf(d.ctx, "Failed to get department: %v", err)

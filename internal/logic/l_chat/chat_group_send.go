@@ -29,25 +29,19 @@ func (d *defaultChat) ChatGroupSend(ctx context.Context, req *char_v1.ChatGroupS
 			return nil, common.NewError(consts.InternalServerError, "Failed to save scene photo")
 		}
 		message = char_v1.ChatContent{
-			Type:     consts.ChatTypeFile,
-			SendId:   claims.UserId,
-			SendTime: time.Now().Unix(),
-			Content:  consts.GroupChatDir + fileName + "/" + req.File.Filename,
+			Type:    consts.ChatTypeFile,
+			Content: consts.GroupChatDir + fileName + "/" + req.File.Filename,
 		}
 
 	} else if req.Message != nil {
 		message = char_v1.ChatContent{
-			Type:     consts.ChatTypeText,
-			SendId:   claims.UserId,
-			SendTime: time.Now().Unix(),
-			Content:  *req.Message,
+			Type:    consts.ChatTypeText,
+			Content: *req.Message,
 		}
 	} else {
 		message = char_v1.ChatContent{
-			Type:     consts.ChatTypeEmpty,
-			SendId:   claims.UserId,
-			SendTime: time.Now().Unix(),
-			Content:  "",
+			Type:    consts.ChatTypeEmpty,
+			Content: "",
 		}
 	}
 	messageJson, _ := json.Marshal(message)
@@ -57,6 +51,12 @@ func (d *defaultChat) ChatGroupSend(ctx context.Context, req *char_v1.ChatGroupS
 		GroupChatCreateTime: message.SendTime,
 		GroupChatMessage:    string(messageJson),
 	}
+
+	//给私聊添加发送时间,部门id,发送者id
+	message.SendTime = time.Now().Unix()
+	message.DepartmentId = &req.GroupChatReceiverId
+	message.SendId = claims.UserId
+
 	if _, err = dao.GroupChat.Ctx(ctx).Insert(groupChat); err != nil {
 		g.Log().Errorf(ctx, "Failed to insert private chat: %v", err)
 		return nil, common.NewError(consts.InternalServerError, "Failed to insert private chat")
@@ -66,6 +66,10 @@ func (d *defaultChat) ChatGroupSend(ctx context.Context, req *char_v1.ChatGroupS
 	var userIds []int
 	for i := range employees {
 		userIds = append(userIds, employees[i].UserId)
+	}
+	//给所有部门成员发送消息
+	if claims.UserId == 1 {
+		userIds = append(userIds, 1)
 	}
 	//发送消息到私聊
 	d.chatConn.SendMessage(message, userIds...)

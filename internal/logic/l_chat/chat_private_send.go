@@ -33,27 +33,26 @@ func (d *defaultChat) ChatPrivateSend(ctx context.Context, req *char_v1.ChatPriv
 			return nil, common.NewError(consts.InternalServerError, "Failed to save scene photo")
 		}
 		message = char_v1.ChatContent{
-			Type:     consts.ChatTypeFile,
-			SendId:   claims.UserId,
-			SendTime: time.Now().Unix(),
-			Content:  consts.PrivateChatDir + fileName + "/" + req.File.Filename,
+			Type:    consts.ChatTypeFile,
+			Content: consts.PrivateChatDir + fileName + "/" + req.File.Filename,
 		}
 
 	} else if req.Message != nil {
 		message = char_v1.ChatContent{
-			Type:     consts.ChatTypeText,
-			SendId:   claims.UserId,
-			SendTime: time.Now().Unix(),
-			Content:  *req.Message,
+			Type:    consts.ChatTypeText,
+			Content: *req.Message,
 		}
 	} else {
 		message = char_v1.ChatContent{
-			Type:     consts.ChatTypeEmpty,
-			SendId:   claims.UserId,
-			SendTime: time.Now().Unix(),
-			Content:  "",
+			Type:    consts.ChatTypeEmpty,
+			Content: "",
 		}
 	}
+
+	message.SendTime = time.Now().Unix()
+	message.SendId = claims.UserId
+	message.ReceiverId = &req.PrivateChatReceiverId
+
 	messageJson, _ := json.Marshal(message)
 	privateChatInfo := entity.PrivateChat{
 		PrivateChatSendId:     claims.UserId,

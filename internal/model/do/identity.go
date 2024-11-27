@@ -10,7 +10,8 @@ import (
 
 // Identity is the golang structure of table identity for DAO operations like Where/Data.
 type Identity struct {
-	g.Meta       `orm:"table:identity, do:true"`
-	IdentityId   interface{} // 身份ID
-	IdentityName interface{} // 身份名称
+	g.Meta          `orm:"table:identity, do:true"`
+	IdentityId      interface{} // 身份ID
+	IdentityName    interface{} // 身份名称
+	ModuleAuthority interface{} // 模块访问权限
 }

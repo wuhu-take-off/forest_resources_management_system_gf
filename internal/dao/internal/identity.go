@@ -20,14 +20,16 @@ type IdentityDao struct {
 
 // IdentityColumns defines and stores column names for table identity.
 type IdentityColumns struct {
-	IdentityId   string // 身份ID
-	IdentityName string // 身份名称
+	IdentityId      string // 身份ID
+	IdentityName    string // 身份名称
+	ModuleAuthority string // 模块访问权限
 }
 
 // identityColumns holds the columns for table identity.
 var identityColumns = IdentityColumns{
-	IdentityId:   "identity_id",
-	IdentityName: "identity_name",
+	IdentityId:      "identity_id",
+	IdentityName:    "identity_name",
+	ModuleAuthority: "module_authority",
 }
 
 // NewIdentityDao creates and returns a new DAO object for table data access.

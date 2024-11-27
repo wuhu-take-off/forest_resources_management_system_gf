@@ -10,10 +10,12 @@ type CallChatReq struct {
 type CallChatRes struct{}
 
 type ChatContent struct {
-	Type     int    `json:"type"` // 1:text 2:file
-	SendId   int    `json:"send_id"`
-	SendTime int64  `json:"send_time"`
-	Content  string `json:"msg"` // text or file content
+	Type         int    `json:"type"` // 1:text 2:file
+	SendId       int    `json:"send_id"`
+	DepartmentId *int   `json:"department_id"`
+	ReceiverId   *int   `json:"receiver_id"`
+	SendTime     int64  `json:"send_time"`
+	Content      string `json:"msg"` // text or file content
 }
 type ChatMessage struct {
 	Type    int    `json:"type"`    // 1:text 2:file

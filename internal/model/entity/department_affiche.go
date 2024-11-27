@@ -12,4 +12,5 @@ type DepartmentAffiche struct {
 	DepartmentId                int    `json:"departmentId"                orm:"department_id"                  ` // 发布部门
 	UserId                      int    `json:"userId"                      orm:"user_id"                        ` // 创建用户
 	DepartmentAfficheCreateTime int64  `json:"departmentAfficheCreateTime" orm:"department_affiche_create_time" ` // 创建时间
+	DepartmentAfficheUpdateTime int64  `json:"departmentAfficheUpdateTime" orm:"department_affiche_update_time" ` // 修改时间
 }
